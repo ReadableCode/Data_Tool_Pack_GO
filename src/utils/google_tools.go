@@ -8,6 +8,7 @@ import (
     "sync"
 	"path/filepath"
 	"log"
+    "runtime"
 
 	"github.com/joho/godotenv"
 
@@ -25,8 +26,12 @@ var (
 func initializeService() {
     fmt.Println("#####################\nInitializing Google Sheets service\n#####################")
 
-	// Load the .env file from the parent directory
-    envPath := filepath.Join("..", ".env")
+    // Get the directory of the source file
+    _, b, _, _ := runtime.Caller(0)
+    basepath := filepath.Dir(b)
+
+    // Construct the path to the .env file relative to the source file
+    envPath := filepath.Join(basepath, "../..", ".env")
     err := godotenv.Load(envPath)
 	if err != nil {
 		log.Fatalf("Error loading .env file")
