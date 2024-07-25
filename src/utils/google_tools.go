@@ -6,6 +6,10 @@ import (
     "fmt"
     "os"
     "sync"
+	"path/filepath"
+	"log"
+
+	"github.com/joho/godotenv"
 
     "golang.org/x/oauth2/google"
     "google.golang.org/api/option"
@@ -20,6 +24,13 @@ var (
 
 func initializeService() {
     fmt.Println("#####################\nInitializing Google Sheets service\n#####################")
+
+	// Load the .env file from the parent directory
+    envPath := filepath.Join("..", ".env")
+    err := godotenv.Load(envPath)
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
 
     // Get the service account key from the environment variable
     key := os.Getenv("GOOGLE_SERVICE_ACCOUNT")
