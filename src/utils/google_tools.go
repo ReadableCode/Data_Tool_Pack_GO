@@ -45,7 +45,7 @@ func initializeService() {
     }
 
     // Decode the key into a google.Config object
-    config, err := google.JWTConfigFromJSON([]byte(key), sheets.SpreadsheetsReadonlyScope)
+    config, err := google.JWTConfigFromJSON([]byte(key), sheets.SpreadsheetsScope)
     if err != nil {
         initErr = fmt.Errorf("unable to parse client secret file to config: %v", err)
         return
@@ -79,4 +79,29 @@ func ReadGoogleSheet(spreadsheetId, sheetName, readRange string) ([][]interface{
     }
 
     return resp.Values, nil
+}
+
+
+// WriteGoogleSheet writes data to the specified range
+func WriteGoogleSheet(spreadsheetId, sheetName, writeRange string, values [][]interface{}) error {
+    once.Do(initializeService)
+    if initErr != nil {
+        return initErr
+    }
+
+    // Specify the full range including the sheet name
+    fullRange := fmt.Sprintf("%s!%s", sheetName, writeRange)
+
+    // Prepare the data to be written
+    valueRange := &sheets.ValueRange{
+        Values: values,
+    }
+
+    // Call the Sheets API
+    _, err := srv.Spreadsheets.Values.Update(spreadsheetId, fullRange, valueRange).ValueInputOption("RAW").Do()
+    if err != nil {
+        return fmt.Errorf("unable to write data to sheet: %v", err)
+    }
+
+    return nil
 }

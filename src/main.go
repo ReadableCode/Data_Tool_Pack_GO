@@ -14,6 +14,7 @@ func main() {
 		spreadsheetId string
 		sheetName     string
 		readRange     string
+		writeRange    string
         err           error
 	)
 
@@ -54,4 +55,20 @@ func main() {
 			fmt.Println(row)
 		}
 	}
+	
+    // Example data to write
+    values := [][]interface{}{
+        {"A", "B", "C", "D"},
+        {1, 2, 3, 4},
+        {5, 6, 7, 8},
+    }
+
+    // Call to write data
+    writeRange = "A10:D12"
+    err = utils.WriteGoogleSheet(spreadsheetId, sheetName, writeRange, values)
+    if err != nil {
+        log.Fatalf("Unable to write data to sheet: %v", err)
+    } else {
+        fmt.Println("Data successfully written to the sheet.")
+    }
 }
