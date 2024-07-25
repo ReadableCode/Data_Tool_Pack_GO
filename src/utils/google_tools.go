@@ -11,8 +11,8 @@ import (
     "google.golang.org/api/sheets/v4"
 )
 
-// ReadGoogleSheet initializes the Sheets service and fetches data from the specified range
-func ReadGoogleSheet(spreadsheetId, sheetName, readRange string) ([][]interface{}, error) {
+// initializeService initializes the Sheets service
+func initializeService() (*sheets.Service, error) {
     // Get the service account key from the environment variable
     key := os.Getenv("GOOGLE_SERVICE_ACCOUNT")
     if key == "" {
@@ -33,6 +33,16 @@ func ReadGoogleSheet(spreadsheetId, sheetName, readRange string) ([][]interface{
     srv, err := sheets.NewService(ctx, option.WithHTTPClient(client))
     if err != nil {
         return nil, fmt.Errorf("unable to retrieve Sheets client: %v", err)
+    }
+
+    return srv, nil
+}
+
+// ReadGoogleSheet fetches data from the specified range
+func ReadGoogleSheet(spreadsheetId, sheetName, readRange string) ([][]interface{}, error) {
+    srv, err := initializeService()
+    if err != nil {
+        return nil, err
     }
 
     // Specify the full range including the sheet name
