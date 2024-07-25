@@ -5,24 +5,34 @@ import (
     "context"
     "fmt"
     "os"
+    "sync"
 
     "golang.org/x/oauth2/google"
     "google.golang.org/api/option"
     "google.golang.org/api/sheets/v4"
 )
 
-// initializeService initializes the Sheets service
-func initializeService() (*sheets.Service, error) {
+var (
+    srv   *sheets.Service
+    once  sync.Once
+    err   error
+)
+
+func initializeService() {
+	fmt.Println("################\nInitializing Google Sheets service\n################")
+
     // Get the service account key from the environment variable
     key := os.Getenv("GOOGLE_SERVICE_ACCOUNT")
     if key == "" {
-        return nil, fmt.Errorf("GOOGLE_SERVICE_ACCOUNT not set in .env file")
+        err = fmt.Errorf("GOOGLE_SERVICE_ACCOUNT not set in .env file")
+        return
     }
 
     // Decode the key into a google.Config object
     config, err := google.JWTConfigFromJSON([]byte(key), sheets.SpreadsheetsReadonlyScope)
     if err != nil {
-        return nil, fmt.Errorf("unable to parse client secret file to config: %v", err)
+        err = fmt.Errorf("unable to parse client secret file to config: %v", err)
+        return
     }
 
     // Create a new client
@@ -30,17 +40,15 @@ func initializeService() (*sheets.Service, error) {
     client := config.Client(ctx)
 
     // Create a new Sheets service
-    srv, err := sheets.NewService(ctx, option.WithHTTPClient(client))
+    srv, err = sheets.NewService(ctx, option.WithHTTPClient(client))
     if err != nil {
-        return nil, fmt.Errorf("unable to retrieve Sheets client: %v", err)
+        err = fmt.Errorf("unable to retrieve Sheets client: %v", err)
     }
-
-    return srv, nil
 }
 
 // ReadGoogleSheet fetches data from the specified range
 func ReadGoogleSheet(spreadsheetId, sheetName, readRange string) ([][]interface{}, error) {
-    srv, err := initializeService()
+    once.Do(initializeService)
     if err != nil {
         return nil, err
     }
