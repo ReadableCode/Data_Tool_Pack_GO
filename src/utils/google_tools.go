@@ -15,23 +15,23 @@ import (
 var (
     srv   *sheets.Service
     once  sync.Once
-    err   error
+    initErr   error
 )
 
 func initializeService() {
-	fmt.Println("################\nInitializing Google Sheets service\n################")
+    fmt.Println("#####################\nInitializing Google Sheets service\n#####################")
 
     // Get the service account key from the environment variable
     key := os.Getenv("GOOGLE_SERVICE_ACCOUNT")
     if key == "" {
-        err = fmt.Errorf("GOOGLE_SERVICE_ACCOUNT not set in .env file")
+        initErr = fmt.Errorf("GOOGLE_SERVICE_ACCOUNT not set in .env file")
         return
     }
 
     // Decode the key into a google.Config object
     config, err := google.JWTConfigFromJSON([]byte(key), sheets.SpreadsheetsReadonlyScope)
     if err != nil {
-        err = fmt.Errorf("unable to parse client secret file to config: %v", err)
+        initErr = fmt.Errorf("unable to parse client secret file to config: %v", err)
         return
     }
 
@@ -42,15 +42,15 @@ func initializeService() {
     // Create a new Sheets service
     srv, err = sheets.NewService(ctx, option.WithHTTPClient(client))
     if err != nil {
-        err = fmt.Errorf("unable to retrieve Sheets client: %v", err)
+        initErr = fmt.Errorf("unable to retrieve Sheets client: %v", err)
     }
 }
 
 // ReadGoogleSheet fetches data from the specified range
 func ReadGoogleSheet(spreadsheetId, sheetName, readRange string) ([][]interface{}, error) {
     once.Do(initializeService)
-    if err != nil {
-        return nil, err
+    if initErr != nil {
+        return nil, initErr
     }
 
     // Specify the full range including the sheet name
