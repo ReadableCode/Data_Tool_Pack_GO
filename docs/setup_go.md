@@ -50,3 +50,10 @@
   ```bash
   go run hello.go
   ```
+
+- To build it and run the executable:
+
+  ```bash
+  go build hello.go
+  ./hello  # on windows will need .exe extension
+  ```
