@@ -45,15 +45,33 @@
   }
   ```
 
+## Run Directly from Source
+
 - Run the program by executing the following command:
 
   ```bash
-  go run hello.go
+  go run hello.go -action=read1
   ```
+
+## Compiling from source
 
 - To build it and run the executable:
 
+  - cd to directory where the hello.go file is located
+
   ```bash
   go build hello.go
-  ./hello  # on windows will need .exe extension
   ```
+
+  - Running on Linux
+  
+    ```bash
+    chmod +x hello
+    ./hello -action=read1
+    ```
+  
+  - Running on Windows
+  
+    ```bash
+    ./hello.exe -action=read1
+    ```
