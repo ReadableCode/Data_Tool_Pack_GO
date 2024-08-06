@@ -50,7 +50,7 @@
 - Run the program by executing the following command:
 
   ```bash
-  go run hello.go -action=read1
+  go run hello.go
   ```
 
 ## Compiling from source
@@ -67,11 +67,11 @@
   
     ```bash
     chmod +x hello
-    ./hello -action=read1
+    ./hello
     ```
   
   - Running on Windows
   
     ```bash
-    ./hello.exe -action=read1
+    ./hello.exe
     ```
