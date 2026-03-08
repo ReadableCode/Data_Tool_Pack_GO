@@ -1,5 +1,24 @@
 # Setup Go
 
+## Setup on Mac (using Homebrew)
+
+```bash
+brew install go
+```
+
+Verify the installation:
+
+```bash
+go version
+```
+
+Install project dependencies:
+
+```bash
+cd Data_Tool_Pack_GO
+go mod download
+```
+
 ## Setup on Linux (not raspberry pi)
 
 - Using apt
@@ -42,13 +61,58 @@ go version
 
 ## Setup on Windows
 
-- Using WinGet
+### With Admin Privileges (WinGet)
 
-  - Open powershell as administrator and run:
-  
-  ```bash
+- Open PowerShell as administrator and run:
+
+  ```powershell
   winget install -e --id GoLang.Go
   ```
+
+### Portable Install (No Admin Privileges)(Untested)
+
+1. Download the Windows zip archive from [https://go.dev/dl/](https://go.dev/dl/) (e.g. `go1.22.4.windows-amd64.zip`)
+
+2. Extract the zip to a folder you control, e.g. `C:\Users\<YourUser>\go-sdk`:
+
+   ```powershell
+   Expand-Archive -Path "$HOME\Downloads\go1.22.4.windows-amd64.zip" -DestinationPath "$HOME\go-sdk"
+   ```
+
+3. Set environment variables for the current session:
+
+   ```powershell
+   $env:GOROOT = "$HOME\go-sdk\go"
+   $env:GOPATH = "$HOME\go"
+   $env:PATH = "$env:GOROOT\bin;$env:GOPATH\bin;$env:PATH"
+   ```
+
+4. To make it permanent across sessions, add to your PowerShell profile:
+
+   ```powershell
+   # Create profile if it doesn't exist
+   if (!(Test-Path -Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force }
+
+   # Append Go env vars
+   Add-Content -Path $PROFILE -Value ''
+   Add-Content -Path $PROFILE -Value '# Go portable install'
+   Add-Content -Path $PROFILE -Value '$env:GOROOT = "$HOME\go-sdk\go"'
+   Add-Content -Path $PROFILE -Value '$env:GOPATH = "$HOME\go"'
+   Add-Content -Path $PROFILE -Value '$env:PATH = "$env:GOROOT\bin;$env:GOPATH\bin;$env:PATH"'
+   ```
+
+5. Verify the installation:
+
+   ```powershell
+   go version
+   ```
+
+6. Install project dependencies:
+
+   ```powershell
+   cd Data_Tool_Pack_GO
+   go mod download
+   ```
 
 ## Testing and Finishing Installation
 
