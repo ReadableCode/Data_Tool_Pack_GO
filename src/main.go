@@ -24,8 +24,8 @@ func main() {
 	)
 
 	// Google Sheet details
-	spreadsheetId = "1pvmIGeanVd0mjIO4-y53OY-z-ueLIY1AF7e-KZGAMzI"
-	sheetName = "rust_test"
+	spreadsheetId = "1cKaxHkIwrH0jEevJt7W5_r_xyw3uwjETerajwbZ8Kjk"
+	sheetName = "go_test"
 
 	switch *action {
 	case "read1":
